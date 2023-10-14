@@ -23,6 +23,23 @@ def ensure_workspace_url(workspace_name_or_url: str) -> str:
         return workspace_name_or_url + ".slack.com"
 
 
+def extract_json_fragment(json_fragment: str, param: str) -> typing.Optional[str]:
+    """
+    Extract a value from a given JSON fragment.
+
+    :param json_fragment: JSON string fragment containing the value to extract.
+    :param param: Name of the parameter to extract.
+
+    :return: The extracted value or None if not found.
+    """
+    pattern = r'"' + param + '"\s*:\s*"([^"]+)"'
+    match = re.search(pattern, json_fragment)
+    if match:
+        return match.group(1)
+    else:
+        return None
+
+
 def extract_api_token(json_fragment: str) -> typing.Optional[str]:
     """
     Extract the API token from a given JSON fragment.
@@ -30,12 +47,20 @@ def extract_api_token(json_fragment: str) -> typing.Optional[str]:
     :param json_fragment: JSON string fragment containing the API token.
     :return: Extracted API token or None if not found.
     """
-    pattern = r'"api_token"\s*:\s*"([^"]+)"'
-    match = re.search(pattern, json_fragment)
-    if match:
-        return match.group(1)
-    else:
-        return None
+    return extract_json_fragment(json_fragment=json_fragment, param="api_token")
+
+
+def extract_slack_info(json_fragment: str) -> typing.Optional[str]:
+    """
+    Extract the team ID and logged-in user ID.
+
+    :param json_fragment: JSON string fragment containing the value to extract.
+    :return: Extracted Slack information or None if not found.
+    """
+    return {
+        "team_id": extract_json_fragment(json_fragment=json_fragment, param="team_id"),
+        "user_id": extract_json_fragment(json_fragment=json_fragment, param="user_id"),
+    }
 
 
 def login_slack(
@@ -122,6 +147,9 @@ def login_slack(
     # Extract API token
     slack_api_token = extract_api_token(response2.text)
 
+    # Extract workspace information
+    slack_login_info = extract_slack_info(response2.text)
+
     # Check API token
     if slack_api_token is None:
         loguru.logger.error(
@@ -137,5 +165,6 @@ def login_slack(
     session.password = password
     session.auth_token = slack_api_token
     session.auth_cookie = slack_auth_cookie
+    session.ids = slack_login_info
 
     return session
