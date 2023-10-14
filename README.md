@@ -6,6 +6,8 @@ A Python module to access Slack's API from user-space, to circumvent all the art
 
 While there exists an official Slack client for Python, Salesforce has introduced arbitrary restrictions on which API calls can be made based on different plans. This puts developers in a challenging position, as there's uncertainty regarding which API calls can be relied upon when building applications for others. `slackish` aims to provide a more reliable, robust, and less selective base for developers to build upon.
 
+For example, `invites.py` shows you how to retrieve the list of invitations for your workspace, a feature that is only available to the API for Enterprise Grid customers.
+
 ## Installation
 
 ```bash
