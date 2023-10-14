@@ -1,0 +1,19 @@
+[tool.poetry]
+authors = ["Jérémie Lumbroso <lumbroso@seas.upenn.edu>"]
+description = "A Python module to access Slack's API from user-space, to circumvent all the artificial API limitations put in by greedy Salesforce. 🤑"
+license = "The Unlicense"
+name = "slackish"
+readme = "README.md"
+version = "0.1.0"
+
+[tool.poetry.dependencies]
+loguru = "^0.7.2"
+python = "^3.11"
+requests = "^2.31.0"
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.25.2"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
